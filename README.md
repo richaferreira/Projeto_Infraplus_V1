@@ -1,114 +1,115 @@
+# 💧 InfraPlus - Gestão de Infraestrutura Hídrica
 
-# InfraPlus — Águas Seguras (MVP)
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white" />
+  <img src="https://img.shields.io/badge/MVC-Architecture-blue?style=for-the-badge" />
+</p>
 
-Organizado por **camadas e pastas**: `backend/` (Flask, modelos, serviços, rotas) e `frontend/` (templates, css, js e uploads). Comentários usam **automaticamente** o nome do usuário logado; há **busca**, **filtros/paginação**, **uploads múltiplos**, **.env** e **e‑mail opcional** no update de status.
+<br>
 
-## Estrutura
+## 📌 Sobre o Projeto
 
-```
-InfraPlus_AguasSeguras/
-├─ run.py                    # ponto de entrada
-├─ requirements.txt
-├─ .env.example             # copie para .env
-├─ backend/
-│  └─ app/
-│     ├─ __init__.py        # cria app com templates/static apontando para frontend/
-│     ├─ config.py          # paths & configs
-│     ├─ extensions.py      # db, mail
-│     ├─ models/            # User, Report, Comment, ReportImage
-│     ├─ forms/             # Login, Register, Report, Status, Comment (sem author)
-│     ├─ services/          # ReportService (create + notify)
-│     ├─ repositories/      # filtros, paginação, contagens
-│     ├─ blueprints/        # public, auth, admin
-│     └─ utils.py           # uploads, admin_required
-└─ frontend/
-   ├─ templates/            # Jinja (base, shared, public, auth, admin, errors)
-   └─ static/
-      ├─ css/styles.css
-      ├─ js/*.js
-      └─ uploads/           # gerada em runtime
-```
+O **InfraPlus** é uma plataforma web desenvolvida para otimizar o reporte e a gestão de problemas relacionados à rede de água (vazamentos, falta de abastecimento, manutenção). O objetivo é conectar o cidadão aos órgãos responsáveis de forma ágil, permitindo um monitoramento eficiente da infraestrutura urbana.
 
-## Como rodar
+> [!IMPORTANT]
+> **Diferencial Técnico:** O projeto utiliza uma arquitetura baseada em **Camadas e Repositórios**, separando rigorosamente as responsabilidades (SOC) e facilitando a manutenção e a escalabilidade do software.
+
+<br>
+
+## 🚀 Funcionalidades Principais
+
+* ✅ **Reporte com Anexos:** Registro de problemas com localização e múltiplos uploads de fotos.
+* ✅ **Painel Administrativo:** Gestão centralizada de chamados com filtros avançados e paginação.
+* ✅ **Comentários Automáticos:** Logs de interação identificando automaticamente o usuário logado.
+* ✅ **Notificações:** Sistema de e-mail integrado para atualizações de status em tempo real.
+
+<br>
+
+## 📂 Estrutura do Projeto
+
+A organização do projeto segue o padrão **MVC** (Model-View-Controller) aliado ao **Repository Pattern**:
+
+
+
 
 ```bash
-# Crie o ambiente virtual
+InfraPlus_AguasSeguras/
+├─ backend/app/
+│  ├─ blueprints/     # Rotas divididas por contexto (Admin, Auth, Public)
+│  ├─ models/         # Definição das tabelas (SQLAlchemy)
+│  ├─ services/       # Lógica de negócio e notificações
+│  ├─ repositories/   # Consultas ao banco, filtros e paginação
+│  └─ forms/          # Validações de formulários (WTForms)
+├─ frontend/
+│  ├─ templates/      # Páginas HTML (Jinja2)
+│  └─ static/         # CSS, JS e diretório de Uploads
+└─ run.py             # Ponto de entrada da aplicação
+```
+🛠️ Tecnologias Utilizadas
+
+Linguagem: Python 3.x
+
+Framework Web: Flask
+
+Banco de Dados: SQLite (Desenvolvimento) / Suporte a PostgreSQL e MySQL
+
+Segurança: Variáveis de ambiente (.env) e validação rigorosa de e-mails.
+
+🔧 Como Rodar o Projeto
+```bash
+# Criar ambiente virtual
 python -m venv .venv
-# Windows PowerShell
-.\.venv\Scripts\Activate.ps1
-# Linux/macOS
-# source .venv/bin/activate
 
-# Instale as dependências
-python -m pip install --upgrade pip
+# Ativar ambiente
+source .venv/bin/activate      # Linux/macOS
+.\.venv\Scripts\Activate.ps1   # Windows
+```
+2. Instalação e Configuração
+```bash
 pip install -r requirements.txt
-
-# Crie o .env com as variáveis de ambiente
 cp .env.example .env
-
-# Suba a aplicação
+```
+3. Execução
+```bash
 python run.py
 ```
+Acesse: http://127.0.0.1:5000/ | Admin Seed: admin@infra.plus / Senha: 123
 
-Acesse a aplicação em `http://127.0.0.1:5000/`.  
-**Admin seed**:  
-- E-mail: `admin@infra.plus`  
-- Senha: `123`
-
-## Variáveis de ambiente
-
-Crie o arquivo `.env` baseado no arquivo `.env.example` e configure as variáveis:
-
-```ini
-# Flask/InfraPlus environment
-FLASK_ENV=development
-SECRET_KEY=troque-por-um-valor-bem-aleatorio-e-seguro
-DATABASE_URL=sqlite:///infra_plus.db  # ou Postgres, etc.
-MAIL_SERVER=smtp.seuprovedor.com
-MAIL_PORT=587
-MAIL_USE_TLS=true
-MAIL_USERNAME=seu_usuario
-MAIL_PASSWORD=sua_senha
-MAIL_DEFAULT_SENDER=infra.plus@seuprojeto.com
+⚙️ Configuração (.env)
+```bash
+Variável,Descrição
+SECRET_KEY,Chave de segurança para criptografia de sessões.
+DATABASE_URL,String de conexão com o banco de dados.
+MAIL_SERVER,Servidor SMTP para envio de notificações.
 ```
 
-### Observações
-- **Uploads**: Armazenados em `frontend/static/uploads/`
-- **Validação de e-mail**: O pacote `email-validator` é utilizado para validação de e-mails.
-- **Notificação por e-mail**: Caso configure o e-mail no `.env`, o autor recebe uma notificação quando o status da denúncia for alterado.
+🗺️ Roadmap de Evolução
 
-## Roadmap sugerido
+[ ] Alembic: Implementar migrações de banco de dados.
 
-- **Alembic (migrações)**: Substituir script manual por **Alembic** para gerenciar o banco de dados de forma mais eficiente.
-- **Testes**: Adicionar **pytest + coverage**, configurar CI para executar os testes automaticamente.
-- **CI/CD**: GitHub Actions para lint, testes e deploy automatizado.
-- **Geocodificação real**: Implementar geocodificação real para o campo de localização de denúncias (Nominatim, com limitação de taxa).
+[ ] Testes Unitários: Adicionar cobertura com pytest.
 
-## Estrutura de arquivos do projeto
+[ ] Geocodificação: Integrar API para converter endereços em coordenadas reais.
 
-### Backend
-- **Arquivos principais**:  
-  - `run.py`: Ponto de entrada.
-  - `config.py`: Configurações gerais do Flask e do banco de dados.
-  - `extensions.py`: Extensões como DB, Mail.
-  - `models/`: Modelos de dados (`User`, `Report`, `Company`, etc.).
-  - `forms/`: Formulários para criação de usuários, relatórios, login, etc.
-  - `services/`: Lógica de serviços (criação de relatórios, envio de e-mails).
-  - `blueprints/`: Diferentes rotas/funcionalidades divididas em Blueprints (ex.: `auth`, `admin`, `public`).
-  - `utils.py`: Funções utilitárias como upload de arquivos.
+[ ] Docker: Criar ambiente de containerização para deploy.
 
-- **Migração de banco de dados**:  
-  Para SQLite, você pode rodar o script `migrate_assigned_company_id.py` para adicionar a coluna de `assigned_company_id` na tabela `report`.
+<p align="center">
+Desenvolvido por <b>Richardson Ferreira</b> 👋 
 
-### Frontend
-- **Templates Jinja**:  
-  - `templates/`: Contém todos os templates HTML para as páginas públicas, de administração e de empresas.
-  - **Arquivos estáticos**:  
-    - `css/`: Arquivos de estilo (`styles.css`).
-    - `js/`: Scripts JavaScript (ex.: `map_home.js`, `report_modal.js`).
-    - `uploads/`: Armazenamento de uploads em tempo de execução.
 
-### Arquivos de configuração
-- **`.env.example`**: Exemplo de configuração para ambiente.
-- **`requirements.txt`**: Dependências do projeto.
-    
+
+
+<a href="https://www.linkedin.com/in/richardson-ferreira-464571264" target="_blank">
+<img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" />
+</a>
+&nbsp;
+<a href="https://github.com/richaferreira" target="_blank">
+<img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
+</a>
+&nbsp;
+  <a href="https://www.instagram.com/richardsonferreira__" target="_blank">
+    <img src="https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram" />
+  </a>
+</p>
