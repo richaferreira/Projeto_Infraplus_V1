@@ -124,4 +124,8 @@ Desenvolvido por <b>Richardson Ferreira</b> 👋
   <a href="https://www.instagram.com/richardsonferreira__" target="_blank">
     <img src="https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram" />
   </a>
+<a><p align="center">
+  <img src="https://komarev.com/ghpvc/?username=richaferreira-InfraPlus&color=dc143c&style=for-the-badge&label=Visualizações" alt="Contador de Visitas" />
+</p></a>
+  
 </p>
