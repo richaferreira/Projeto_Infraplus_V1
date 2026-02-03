@@ -1,4 +1,4 @@
-# 💧 InfraPlus - Gestão de Infraestrutura Hídrica
+# 💧 InfraPlus - Gestão de Infraestrutura Hídrica - Projeto Acadêmico.
 
 <p align="center">
   <img src="https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow?style=for-the-badge" />
@@ -15,6 +15,18 @@ O **InfraPlus** é uma plataforma web desenvolvida para otimizar o reporte e a g
 
 > [!IMPORTANT]
 > **Diferencial Técnico:** O projeto utiliza uma arquitetura baseada em **Camadas e Repositórios**, separando rigorosamente as responsabilidades (SOC) e facilitando a manutenção e a escalabilidade do software.
+
+
+<br>
+
+
+
+🤝 Contribuição e Comunidade
+Quer ajudar o projeto a crescer e ainda ganhar Achievements no seu perfil?
+
+Issues: Confira nossas Good First Issues para começar a contribuir.
+
+Guia: Antes de enviar um Pull Request, leia o nosso arquivo CONTRIBUTING.md.
 
 <br>
 
