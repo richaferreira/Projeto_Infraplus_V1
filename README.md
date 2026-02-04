@@ -110,7 +110,8 @@ Guia: Antes de enviar um Pull Request, leia o nosso arquivo CONTRIBUTING.md.
 <p align="center">
 Projeto Acadêmico - <b>Universidade de Vassouras.</b> 👋 
 
-
+<br>
+<br>
 
 
 <a href="https://www.linkedin.com/in/richardson-ferreira-464571264" target="_blank">
