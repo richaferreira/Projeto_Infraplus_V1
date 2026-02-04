@@ -108,7 +108,7 @@ Guia: Antes de enviar um Pull Request, leia o nosso arquivo CONTRIBUTING.md.
 <br>
 
 <p align="center">
-Desenvolvido por <b>Richardson Ferreira</b> 👋 
+Projeto Acadêmico - <b>Universidade de Vassouras.</b> 👋 
 
 
 
