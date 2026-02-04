@@ -9,7 +9,7 @@
 
 <br>
 
-## 📌 Sobre o Projeto
+## 📌 Sobre o Projeto.
 
 O **InfraPlus** é uma plataforma web desenvolvida para otimizar o reporte e a gestão de problemas relacionados à rede de água (vazamentos, falta de abastecimento, manutenção). O objetivo é conectar o cidadão aos órgãos responsáveis de forma ágil, permitindo um monitoramento eficiente da infraestrutura urbana.
 
