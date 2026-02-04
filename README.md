@@ -17,19 +17,6 @@ O **InfraPlus** é uma plataforma web desenvolvida para otimizar o reporte e a g
 > **Diferencial Técnico:** O projeto utiliza uma arquitetura baseada em **Camadas e Repositórios**, separando rigorosamente as responsabilidades (SOC) e facilitando a manutenção e a escalabilidade do software.
 
 
-<br>
-
-
-
-🤝 Contribuição e Comunidade
-Quer ajudar o projeto a crescer e ainda ganhar Achievements no seu perfil?
-
-Issues: Confira nossas Good First Issues para começar a contribuir.
-
-Guia: Antes de enviar um Pull Request, leia o nosso arquivo CONTRIBUTING.md.
-
-<br>
-
 ## 🚀 Funcionalidades Principais
 
 * ✅ **Reporte com Anexos:** Registro de problemas com localização e múltiplos uploads de fotos.
@@ -106,6 +93,19 @@ MAIL_SERVER,Servidor SMTP para envio de notificações.
 [ ] Geocodificação: Integrar API para converter endereços em coordenadas reais.
 
 [ ] Docker: Criar ambiente de containerização para deploy.
+
+<br>
+
+
+
+🤝 Contribuição e Comunidade
+Quer ajudar o projeto a crescer e ainda ganhar Achievements no seu perfil?
+
+Issues: Confira nossas Good First Issues para começar a contribuir.
+
+Guia: Antes de enviar um Pull Request, leia o nosso arquivo CONTRIBUTING.md.
+
+<br>
 
 <p align="center">
 Desenvolvido por <b>Richardson Ferreira</b> 👋 
