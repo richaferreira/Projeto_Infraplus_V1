@@ -98,12 +98,6 @@ MAIL_SERVER,Servidor SMTP para envio de notificações.
 
 
 
-🤝 Contribuição e Comunidade
-Quer ajudar o projeto a crescer e ainda ganhar Achievements no seu perfil?
-
-Issues: Confira nossas Good First Issues para começar a contribuir.
-
-Guia: Antes de enviar um Pull Request, leia o nosso arquivo CONTRIBUTING.md.
 
 <br>
 
