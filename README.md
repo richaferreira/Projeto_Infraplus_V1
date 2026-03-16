@@ -56,15 +56,18 @@ A organização do projeto segue o padrão **MVC** (Model-View-Controller) aliad
 │       └── uploads/
 └── run.py (entrada da aplicação)
 ```
-🛠️ Tecnologias Utilizadas
-
-Linguagem: Python 3.x
-
-Framework Web: Flask
-
-Banco de Dados: SQLite (Desenvolvimento) / Suporte a PostgreSQL e MySQL
-
-Segurança: Variáveis de ambiente (.env) e validação rigorosa de e-mails.
+### 📋 **Informações Gerais**
+- **Nome**: Projeto Infraplus (InfraPlus — Águas Seguras)
+- **Descrição**: Projeto InflaPlus
+- **Licença**: Apache License 2.0
+- **Criado em**: 4 de março de 2023
+- **Visibilidade**: Público
+- **Linguagens**:
+  - HTML: 53.6%
+  - Python: 40.3%
+  - JavaScript: 4.7%
+  - Other: 1.4%
+    
 
 🔧 Como Rodar o Projeto
 ```bash
