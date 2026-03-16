@@ -79,16 +79,6 @@ A organização do projeto segue o padrão **MVC** (Model-View-Controller) aliad
   - JavaScript: 4.7%
   - Other: 1.4%
 
-### 🎯 **Propósito da Aplicação**
-
-**InfraPlus — Águas Seguras** é um sistema de **denúncias sobre infraestrutura hídrica** que permite:
-
-- **Criar denúncias** sobre problemas de água/saneamento
-- **Visualizar denúncias** abertas, em andamento ou resolvidas
-- **Geolocalização**: Sistema de mapa interativo (Leaflet)
-- **Gestão de empresas** terceirizadas para resolução
-- **Painel administrativo** para monitoramento
-- **Upload de imagens** para evidências
 
 ---
 
@@ -128,9 +118,6 @@ O projeto implementa **3 níveis de acesso**:
    - Criar e visualizar denúncias
    - Usar geolocalização
 
-**Credenciais padrão de admin:**
-- Email: admin@infra.plus
-- Senha: 123
 
 ---
 
