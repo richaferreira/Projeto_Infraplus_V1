@@ -36,17 +36,25 @@ A organização do projeto segue o padrão **MVC** (Model-View-Controller) aliad
 
 
 ```bash
-InfraPlus_AguasSeguras/
-├─ backend/app/
-│  ├─ blueprints/     # Rotas divididas por contexto (Admin, Auth, Public)
-│  ├─ models/         # Definição das tabelas (SQLAlchemy)
-│  ├─ services/       # Lógica de negócio e notificações
-│  ├─ repositories/   # Consultas ao banco, filtros e paginação
-│  └─ forms/          # Validações de formulários (WTForms)
-├─ frontend/
-│  ├─ templates/      # Páginas HTML (Jinja2)
-│  └─ static/         # CSS, JS e diretório de Uploads
-└─ run.py             # Ponto de entrada da aplicação
+├── backend/
+│   └── app/
+│       ├── __init__.py (inicialização Flask)
+│       ├── config.py (configurações)
+│       ├── models/ (modelos de dados)
+│       ├── services/ (lógica de negócios)
+│       ├── blueprints/
+│       │   ├── public/ (rotas públicas)
+│       │   ├── auth/ (autenticação)
+│       │   ├── admin/ (painel administrativo)
+│       │   └── company/ (gerenciamento de empresas)
+│       └── utils.py (utilitários)
+├── frontend/
+│   ├── templates/ (HTML templates)
+│   └── static/
+│       ├── css/
+│       ├── js/
+│       └── uploads/
+└── run.py (entrada da aplicação)
 ```
 🛠️ Tecnologias Utilizadas
 
