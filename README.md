@@ -18,13 +18,24 @@ O **InfraPlus** é uma plataforma web desenvolvida para otimizar o reporte e a g
 > [!IMPORTANT]
 > **Diferencial Técnico:** O projeto utiliza uma arquitetura baseada em **Camadas e Repositórios**, separando rigorosamente as responsabilidades (SOC) e facilitando a manutenção e a escalabilidade do software.
 
+### 🎯 **Propósito da Aplicação**
 
-## 🚀 Funcionalidades Principais
+- **Criar denúncias** sobre problemas de água/saneamento
+- **Visualizar denúncias** abertas, em andamento ou resolvidas
+- **Geolocalização**: Sistema de mapa interativo (Leaflet)
+- **Gestão de empresas** terceirizadas para resolução
+- **Painel administrativo** para monitoramento
+- **Upload de imagens** para evidências
+
+---
+
+## 🚀 Funcionalidades Ativas
 
 * ✅ **Reporte com Anexos:** Registro de problemas com localização e múltiplos uploads de fotos.
 * ✅ **Painel Administrativo:** Gestão centralizada de chamados com filtros avançados e paginação.
+* ✅ **Gestão de empresas:** Cria empresas terceirizadas para resolução.
 * ✅ **Comentários Automáticos:** Logs de interação identificando automaticamente o usuário logado.
-* ✅ **Notificações:** Sistema de e-mail integrado para atualizações de status em tempo real.
+* ✅ **Geolocalização:** Sistema de mapa interativo (Leaflet).
 
 <br>
 
@@ -67,7 +78,122 @@ A organização do projeto segue o padrão **MVC** (Model-View-Controller) aliad
   - Python: 40.3%
   - JavaScript: 4.7%
   - Other: 1.4%
-    
+
+### 🎯 **Propósito da Aplicação**
+
+**InfraPlus — Águas Seguras** é um sistema de **denúncias sobre infraestrutura hídrica** que permite:
+
+- **Criar denúncias** sobre problemas de água/saneamento
+- **Visualizar denúncias** abertas, em andamento ou resolvidas
+- **Geolocalização**: Sistema de mapa interativo (Leaflet)
+- **Gestão de empresas** terceirizadas para resolução
+- **Painel administrativo** para monitoramento
+- **Upload de imagens** para evidências
+
+---
+
+### 🔧 **Stack Tecnológico**
+
+**Backend:**
+- **Flask** (framework web Python)
+- **Flask-SQLAlchemy** (ORM para banco de dados)
+- **Flask-Login** (autenticação de usuários)
+- **Flask-Mail** (envio de e-mails)
+- **WTForms** (processamento de formulários)
+- **SQLite** (banco de dados padrão)
+
+**Frontend:**
+- **HTML5** com Jinja2 templates
+- **Bootstrap 5.3.2** (UI framework)
+- **Leaflet.js** (mapas interativos)
+- **Chart.js** (gráficos)
+- **JavaScript vanilla**
+
+---
+
+### 👥 **Sistema de Usuários e Permissões**
+
+O projeto implementa **3 níveis de acesso**:
+
+1. **Admin** (is_admin=True)
+   - Painel administrativo
+   - Gerenciamento de empresas terceirizadas
+   - Exportação de dados (CSV)
+
+2. **Empresa** (company_id vinculado)
+   - Dashboard próprio
+   - Gerenciamento de denúncias atribuídas
+
+3. **Usuário Público**
+   - Criar e visualizar denúncias
+   - Usar geolocalização
+
+**Credenciais padrão de admin:**
+- Email: admin@infra.plus
+- Senha: 123
+
+---
+
+### 📁 **Principais Funcionalidades**
+
+**No Backend:**
+
+1. **ReportService** - Criação e gerenciamento de denúncias
+   - Salvamento de imagens com UUID único
+   - Notificação por e-mail quando status muda
+   - Suporte a múltiplas imagens por denúncia
+
+2. **Utils** - Funções auxiliares
+   - Validação de uploads (apenas .png, .jpg, .jpeg, .gif)
+   - Decoradores para controle de acesso (@admin_required, @company_required)
+   - Funções de segurança de arquivo
+
+3. **Blueprints Registrados:**
+   - public_bp - Rotas públicas
+   - auth_bp - Autenticação/cadastro
+   - admin_bp - Administração
+   - company_bp - Gestão empresarial
+
+**No Frontend:**
+
+1. **Map Picker** - Seletor de localização interativo
+   - Clique no mapa para definir coordenadas
+   - Geolocalização automática do navegador
+   - Integração com OpenStreetMap
+
+2. **Map Detail** - Visualização de localização da denúncia
+   - Exibição de marcador no mapa
+   - Centrado nas coordenadas lat/lon
+
+3. **Charts** - Visualização de dados
+   - Gráfico de linha (últimos 7 dias de denúncias)
+   - Gráfico de pizza (denúncias por categoria)
+
+4. **Navigation** - Menu responsivo com busca
+   - Filtro por status (Abertas, Em andamento, Resolvidas)
+   - Dropdowns contextuais para admin/empresa
+
+---
+
+### 🔐 **Segurança Implementada**
+
+- CSRF protection via CSRFProtect
+- Validação de arquivos por extensão
+- Nomes de arquivo sanitizados com secure_filename
+- UUIDs para nomes únicos de arquivos
+- Decoradores para verificação de autenticação e autorização
+
+---
+
+### 💾 **Configurações Principais**
+
+```python
+MAX_CONTENT_LENGTH = 20 MB  # Limite de upload
+ALLOWED_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif'}
+DATABASE_URL = SQLite (infra_plus.db)
+UPLOAD_FOLDER = frontend/static/uploads
+SECRET_KEY = configurável via ambiente
+```
 
 🔧 Como Rodar o Projeto
 ```bash
@@ -96,6 +222,8 @@ SECRET_KEY,Chave de segurança para criptografia de sessões.
 DATABASE_URL,String de conexão com o banco de dados.
 MAIL_SERVER,Servidor SMTP para envio de notificações.
 ```
+
+
 
 🗺️ Roadmap de Evolução
 
