@@ -3,6 +3,7 @@ import logging
 from backend.app.extensions import db, mail
 from backend.app.models import Report, ReportImage
 from backend.app.utils import save_uploaded_image
+from backend.app.notifications import notification_bus
 from flask_mail import Message
 from flask import current_app
 
@@ -31,9 +32,20 @@ class ReportService:
             if fname:
                 db.session.add(ReportImage(report_id=r.id, filename=fname))
         db.session.commit()
+        notification_bus.publish('new_report', {
+            'id': r.id,
+            'title': r.title,
+            'category': r.category,
+            'status': r.status,
+        })
         return r
 
     def notify_status_change(self, report: Report):
+        notification_bus.publish('status_change', {
+            'id': report.id,
+            'title': report.title,
+            'status': report.status,
+        })
         try:
             sender = current_app.config.get('MAIL_DEFAULT_SENDER')
             if not sender:

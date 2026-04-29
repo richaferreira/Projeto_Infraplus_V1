@@ -6,6 +6,7 @@ from flask_login import login_user, login_required, logout_user, current_user
 from backend.app.forms import LoginForm, RegisterForm
 from backend.app.models import User
 from backend.app.extensions import db
+from backend.app.rate_limit import login_limiter
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -15,8 +16,13 @@ def login():
         return redirect(url_for('admin.dashboard'))
     form = LoginForm()
     if form.validate_on_submit():
+        ip = request.remote_addr or 'unknown'
+        if login_limiter.is_rate_limited(ip):
+            flash('Muitas tentativas de login. Aguarde 5 minutos.', 'danger')
+            return render_template('auth/login.html', form=form)
         user = User.query.filter_by(email=form.email.data.strip().lower()).first()
         if user and user.check_password(form.password.data):
+            login_limiter.reset(ip)
             login_user(user)
             flash('Login realizado com sucesso!', 'success')
             next_url = request.args.get('next')
@@ -32,7 +38,12 @@ def login():
                 else:
                     next_url = url_for('public.home')
             return redirect(next_url)
-        flash('Credenciais inválidas.', 'danger')
+        login_limiter.record_attempt(ip)
+        remaining = login_limiter.remaining_attempts(ip)
+        if remaining > 0:
+            flash(f'Credenciais inválidas. {remaining} tentativa(s) restante(s).', 'danger')
+        else:
+            flash('Muitas tentativas de login. Aguarde 5 minutos.', 'danger')
     return render_template('auth/login.html', form=form)
 
 @auth_bp.route('/cadastro', methods=['GET','POST'])

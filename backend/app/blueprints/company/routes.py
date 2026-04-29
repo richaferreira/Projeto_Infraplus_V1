@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from backend.app.extensions import db
 from backend.app.models import Report, Comment
+from backend.app.repositories.report_repository import ReportRepository
 
 company_bp = Blueprint('company', __name__, url_prefix='/empresa')
 
@@ -18,8 +19,9 @@ def dashboard():
          .filter(Report.assigned_company_id == company_id)
          .order_by(Report.created_at.desc()))
 
-    reports = q.limit(50).all()
-    total = q.count()
+    reports, total, page, pages = ReportRepository.paginate(
+        q, request.args.get('page', 1), 12
+    )
 
     by_status_rows = (db.session.query(Report.status, db.func.count(Report.id))
                       .filter(Report.assigned_company_id == company_id)
@@ -33,7 +35,8 @@ def dashboard():
 
     return render_template('company/dashboard.html',
                            reports=reports, total=total,
-                           by_status=by_status, by_category=by_category)
+                           by_status=by_status, by_category=by_category,
+                           page=page, pages=pages)
 
 @company_bp.route('/reports/<int:report_id>', methods=['GET', 'POST'])
 @login_required
