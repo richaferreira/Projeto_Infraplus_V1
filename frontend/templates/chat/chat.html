@@ -70,7 +70,7 @@
 
     fetch('/api/chat', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token() }}'},
       body: JSON.stringify({message: msg})
     })
     .then(function(r) { return r.json(); })
