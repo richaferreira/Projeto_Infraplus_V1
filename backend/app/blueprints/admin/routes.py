@@ -63,7 +63,11 @@ def report_assign(report_id: int):
     r = Report.query.get_or_404(report_id)
     company_id = request.form.get('company_id')
     if company_id:
-        r.assigned_company_id = int(company_id)
+        try:
+            r.assigned_company_id = int(company_id)
+        except (ValueError, TypeError):
+            flash('ID de empresa inválido.', 'danger')
+            return redirect(url_for('admin.report_manage', report_id=report_id))
     else:
         r.assigned_company_id = None
     db.session.commit()
@@ -96,7 +100,10 @@ def export_csv():
 @login_required
 @admin_required
 def companies_list():
-    page = int(request.args.get('page', 1))
+    try:
+        page = max(1, int(request.args.get('page', 1)))
+    except (ValueError, TypeError):
+        page = 1
     per_page = 10
     pagination = Company.query.order_by(Company.created_at.desc()).paginate(page=page, per_page=per_page, error_out=False)
     return render_template('admin/companies_list.html', pagination=pagination, companies=pagination.items)
@@ -133,7 +140,10 @@ def companies_new():
 @login_required
 @admin_required
 def users_list():
-    page = int(request.args.get('page', 1))
+    try:
+        page = max(1, int(request.args.get('page', 1)))
+    except (ValueError, TypeError):
+        page = 1
     per_page = 20
     q = User.query.order_by(User.created_at.desc())
     search = request.args.get('q', '').strip()
