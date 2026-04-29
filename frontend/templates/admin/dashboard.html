@@ -5,27 +5,64 @@
 {% block content %}
   <div class="container my-4">
     <h2 class="h4 mb-3">Painel administrativo</h2>
-<div class="mb-3">
-  <a class="btn btn-outline-primary" href="{{ url_for('admin.companies_list') }}">Empresas terceirizadas</a>
-</div>
+    <div class="d-flex gap-2 mb-3">
+      <a class="btn btn-outline-primary" href="{{ url_for('admin.companies_list') }}"><i class="bi bi-building"></i> Empresas</a>
+      <a class="btn btn-outline-secondary" href="{{ url_for('admin.users_list') }}"><i class="bi bi-people"></i> Usuários</a>
+    </div>
 
     <div class="row g-3 mb-3">
-      <div class="col-md-3"><div class="card shadow-sm h-100"><div class="card-body">
-        <div class="text-muted small">Total de denúncias (geral)</div>
-        <div class="display-6">{{ stats.total }}</div>
-      </div></div></div>
-      <div class="col-md-3"><div class="card shadow-sm h-100"><div class="card-body">
-        <div class="text-muted small">Abertas</div>
-        <div class="h2 mb-0">{{ stats.by_status.get('Aberta', 0) }}</div>
-      </div></div></div>
-      <div class="col-md-3"><div class="card shadow-sm h-100"><div class="card-body">
-        <div class="text-muted small">Em andamento</div>
-        <div class="h2 mb-0">{{ stats.by_status.get('Em andamento', 0) }}</div>
-      </div></div></div>
-      <div class="col-md-3"><div class="card shadow-sm h-100"><div class="card-body">
-        <div class="text-muted small">Resolvidas</div>
-        <div class="h2 mb-0">{{ stats.by_status.get('Resolvida', 0) }}</div>
-      </div></div></div>
+      <div class="col-md-3">
+        <div class="card shadow-sm h-100 border-start border-primary border-4">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="text-muted small">Total de denúncias</div>
+                <div class="display-6 fw-bold">{{ stats.total }}</div>
+              </div>
+              <i class="bi bi-megaphone text-primary" style="font-size: 2rem; opacity: .5;"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm h-100 border-start border-danger border-4">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="text-muted small">Abertas</div>
+                <div class="h2 mb-0 fw-bold text-danger">{{ stats.by_status.get('Aberta', 0) }}</div>
+              </div>
+              <i class="bi bi-exclamation-circle text-danger" style="font-size: 2rem; opacity: .5;"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm h-100 border-start border-warning border-4">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="text-muted small">Em andamento</div>
+                <div class="h2 mb-0 fw-bold text-warning">{{ stats.by_status.get('Em andamento', 0) }}</div>
+              </div>
+              <i class="bi bi-hourglass-split text-warning" style="font-size: 2rem; opacity: .5;"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm h-100 border-start border-success border-4">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="text-muted small">Resolvidas</div>
+                <div class="h2 mb-0 fw-bold text-success">{{ stats.by_status.get('Resolvida', 0) }}</div>
+              </div>
+              <i class="bi bi-check-circle text-success" style="font-size: 2rem; opacity: .5;"></i>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="row g-3 mb-4">

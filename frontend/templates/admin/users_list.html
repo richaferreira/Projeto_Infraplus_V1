@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %}Usuários — Admin — InfraPlus{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h4 mb-0"><i class="bi bi-people"></i> Usuários</h1>
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Voltar</a>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card shadow-sm border-start border-primary border-4">
+        <div class="card-body">
+          <div class="text-muted small">Total de Usuários</div>
+          <div class="h3 mb-0 fw-bold">{{ total_users }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm border-start border-success border-4">
+        <div class="card-body">
+          <div class="text-muted small">Administradores</div>
+          <div class="h3 mb-0 fw-bold">{{ total_admins }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm border-start border-info border-4">
+        <div class="card-body">
+          <div class="text-muted small">Usuários Comuns</div>
+          <div class="h3 mb-0 fw-bold">{{ total_users - total_admins }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <form class="mb-3" method="get">
+    <div class="input-group">
+      <input type="text" class="form-control" name="q" value="{{ search }}" placeholder="Buscar por nome ou e-mail...">
+      <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i> Buscar</button>
+      {% if search %}
+      <a href="{{ url_for('admin.users_list') }}" class="btn btn-outline-secondary">Limpar</a>
+      {% endif %}
+    </div>
+  </form>
+
+  <div class="table-responsive bg-white shadow-sm rounded">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>#</th>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>Tipo</th>
+          <th>Empresa</th>
+          <th>Denúncias</th>
+          <th>Cadastro</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td>{{ u.id }}</td>
+          <td>{{ u.name }}</td>
+          <td>{{ u.email }}</td>
+          <td>
+            {% if u.is_admin %}
+              <span class="badge bg-danger">Admin</span>
+            {% elif u.company %}
+              <span class="badge bg-info">Empresa</span>
+            {% else %}
+              <span class="badge bg-secondary">Cidadão</span>
+            {% endif %}
+          </td>
+          <td>{{ u.company.name if u.company else '—' }}</td>
+          <td>{{ u.reports|length }}</td>
+          <td>{{ u.created_at.strftime('%d/%m/%Y') if u.created_at else '—' }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-center text-muted py-3">Nenhum usuário encontrado.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if pagination.pages > 1 %}
+  <nav class="mt-3">
+    <ul class="pagination">
+      <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+        <a class="page-link" href="?page={{ pagination.prev_num }}&q={{ search }}">Anterior</a>
+      </li>
+      {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+        {% if p %}
+          <li class="page-item {% if p == pagination.page %}active{% endif %}">
+            <a class="page-link" href="?page={{ p }}&q={{ search }}">{{ p }}</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">…</span></li>
+        {% endif %}
+      {% endfor %}
+      <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+        <a class="page-link" href="?page={{ pagination.next_num }}&q={{ search }}">Próxima</a>
+      </li>
+    </ul>
+  </nav>
+  {% endif %}
+</div>
+{% endblock %}

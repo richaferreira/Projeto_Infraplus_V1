@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% from 'shared/_status_badge.html' import status_badge %}
+{% block title %}Minhas Denúncias — InfraPlus{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 mb-0"><i class="bi bi-person-lines-fill"></i> Minhas Denúncias</h2>
+    <a href="{{ url_for('public.report_new') }}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Nova denúncia</a>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card shadow-sm border-start border-primary border-4">
+        <div class="card-body py-2">
+          <div class="text-muted small">Total</div>
+          <div class="h4 mb-0 fw-bold">{{ total }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card shadow-sm border-start border-danger border-4">
+        <div class="card-body py-2">
+          <div class="text-muted small">Abertas</div>
+          <div class="h4 mb-0 fw-bold text-danger">{{ by_status.get('Aberta', 0) }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card shadow-sm border-start border-warning border-4">
+        <div class="card-body py-2">
+          <div class="text-muted small">Em andamento</div>
+          <div class="h4 mb-0 fw-bold text-warning">{{ by_status.get('Em andamento', 0) }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card shadow-sm border-start border-success border-4">
+        <div class="card-body py-2">
+          <div class="text-muted small">Resolvidas</div>
+          <div class="h4 mb-0 fw-bold text-success">{{ by_status.get('Resolvida', 0) }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <form class="card card-body shadow-sm mb-3" method="get">
+    <div class="row g-2 align-items-end">
+      <div class="col-md-4">
+        <label class="form-label">Status</label>
+        <select class="form-select" name="status">
+          <option value="">Todos</option>
+          {% for s in ['Aberta','Em andamento','Resolvida'] %}
+            <option value="{{ s }}" {% if request.args.get('status')==s %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4 d-grid">
+        <button class="btn btn-primary"><i class="bi bi-funnel"></i> Filtrar</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="row g-3">
+    {% for r in reports %}
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <span class="float-end">{{ status_badge(r.status) }}</span>
+            <h6 class="card-title">#{{ r.id }} — {{ r.title }}</h6>
+            <div class="small text-muted">{{ r.category }} &bull; {{ r.created_at.strftime('%d/%m/%Y %H:%M') }}</div>
+            <p class="mt-2 text-truncate-2">{{ r.description }}</p>
+            <a href="{{ url_for('public.report_detail', report_id=r.id) }}" class="btn btn-sm btn-outline-primary">Detalhes</a>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="col-12">
+        <div class="alert alert-info">
+          Você ainda não fez nenhuma denúncia.
+          <a href="{{ url_for('public.report_new') }}" class="alert-link">Fazer minha primeira denúncia</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if pages > 1 %}
+  <nav class="mt-3">
+    <ul class="pagination justify-content-center">
+      <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+        <a class="page-link" href="?page={{ page - 1 }}&status={{ request.args.get('status','') }}">&laquo;</a>
+      </li>
+      {% for p in range(1, pages + 1) %}
+        <li class="page-item {% if p == page %}active{% endif %}">
+          <a class="page-link" href="?page={{ p }}&status={{ request.args.get('status','') }}">{{ p }}</a>
+        </li>
+      {% endfor %}
+      <li class="page-item {% if page >= pages %}disabled{% endif %}">
+        <a class="page-link" href="?page={{ page + 1 }}&status={{ request.args.get('status','') }}">&raquo;</a>
+      </li>
+    </ul>
+  </nav>
+  {% endif %}
+</div>
+{% endblock %}

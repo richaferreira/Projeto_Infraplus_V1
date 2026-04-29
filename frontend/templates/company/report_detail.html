@@ -18,6 +18,20 @@
             Categoria: <strong>{{ report.category or '—' }}</strong> •
             Criado: {% if report.created_at %}{{ report.created_at.strftime('%d/%m/%Y %H:%M') }}{% else %}—{% endif %}
           </div>
+          {% if report.image_filename %}
+            <img class="img-fluid rounded mb-2" src="{{ url_for('static', filename='uploads/' ~ report.image_filename) }}" alt="Imagem da denúncia">
+          {% endif %}
+          {% if report.images %}
+            <div class="row g-2 mb-2">
+              {% for img in report.images %}
+                <div class="col-6 col-md-4">
+                  <a href="{{ url_for('static', filename='uploads/' ~ img.filename) }}" target="_blank">
+                    <img src="{{ url_for('static', filename='uploads/' ~ img.filename) }}" class="img-fluid rounded" alt="Foto adicional">
+                  </a>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
           <p class="mb-0">{{ report.description or '' }}</p>
         </div>
       </div>

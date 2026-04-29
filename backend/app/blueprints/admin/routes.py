@@ -53,7 +53,22 @@ def report_manage(report_id: int):
         flash('Status atualizado!', 'success')
         return redirect(url_for('admin.report_manage', report_id=report_id))
     form.status.data = r.status
-    return render_template('admin/report_detail.html', r=r, sform=form)
+    companies = Company.query.order_by(Company.name).all()
+    return render_template('admin/report_detail.html', r=r, sform=form, companies=companies)
+
+@admin_bp.route('/admin/denuncia/<int:report_id>/atribuir', methods=['POST'])
+@login_required
+@admin_required
+def report_assign(report_id: int):
+    r = Report.query.get_or_404(report_id)
+    company_id = request.form.get('company_id')
+    if company_id:
+        r.assigned_company_id = int(company_id)
+    else:
+        r.assigned_company_id = None
+    db.session.commit()
+    flash('Empresa atribuída com sucesso!', 'success')
+    return redirect(url_for('admin.report_manage', report_id=report_id))
 
 @admin_bp.route('/admin/denuncia/<int:report_id>/remover', methods=['POST'])
 @login_required
@@ -113,6 +128,25 @@ def companies_new():
                 flash('Empresa cadastrada e conta criada com sucesso.', 'success')
             return redirect(url_for('admin.companies_list'))
     return render_template('admin/companies_new.html', form=form)
+
+@admin_bp.route('/admin/usuarios')
+@login_required
+@admin_required
+def users_list():
+    page = int(request.args.get('page', 1))
+    per_page = 20
+    q = User.query.order_by(User.created_at.desc())
+    search = request.args.get('q', '').strip()
+    if search:
+        like = f'%{search}%'
+        q = q.filter(User.name.ilike(like) | User.email.ilike(like))
+    pagination = q.paginate(page=page, per_page=per_page, error_out=False)
+    total_users = User.query.count()
+    total_admins = User.query.filter_by(is_admin=True).count()
+    return render_template('admin/users_list.html',
+                           pagination=pagination, users=pagination.items,
+                           total_users=total_users, total_admins=total_admins,
+                           search=search)
 
 @admin_bp.route('/admin/terceirizadas/<int:company_id>/excluir', methods=['POST'])
 @login_required
