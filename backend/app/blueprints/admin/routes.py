@@ -1,15 +1,18 @@
-from backend.app.forms import CompanyForm
+import csv
+import logging
+from io import StringIO
+
 from flask import Blueprint, render_template, redirect, url_for, flash, request, Response
 from flask_login import login_required
 from sqlalchemy import func
+from backend.app.forms import CompanyForm
 from backend.app.models import Report, Company, User
 from backend.app.extensions import db
 from backend.app.utils import admin_required
 from backend.app.services.report_service import ReportService
-import csv
-from io import StringIO
-from datetime import datetime, timedelta
-import math
+from backend.app.repositories.report_repository import ReportRepository
+
+logger = logging.getLogger(__name__)
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -17,52 +20,20 @@ admin_bp = Blueprint('admin', __name__)
 @login_required
 @admin_required
 def dashboard():
-    status = request.args.get('status')
-    categoria = request.args.get('categoria')
-    de = request.args.get('de')
-    ate = request.args.get('ate')
-
-    q = Report.query
-    if status:
-        q = q.filter(Report.status == status)
-    if categoria:
-        q = q.filter(Report.category == categoria)
-    def parse_date(s):
-        try:
-            return datetime.strptime(s, '%Y-%m-%d')
-        except Exception:
-            return None
-    d0 = parse_date(de)
-    d1 = parse_date(ate)
-    if d0:
-        q = q.filter(Report.created_at >= d0)
-    if d1:
-        q = q.filter(Report.created_at < d1.replace(hour=23, minute=59, second=59))
-
-    q = q.order_by(Report.created_at.desc())
-
-    try:
-        page = max(1, int(request.args.get('page', '1')))
-    except Exception:
-        page = 1
-    per_page = 12
-    total = q.count()
-    reports = q.limit(per_page).offset((page-1)*per_page).all()
-    pages = math.ceil(total / per_page) if per_page else 1
+    repo = ReportRepository
+    q = repo.apply_filters(
+        Report.query.order_by(Report.created_at.desc()),
+        categoria=request.args.get('categoria'),
+        status=request.args.get('status'),
+        de=request.args.get('de'),
+        ate=request.args.get('ate'),
+    )
+    reports, total, page, pages = repo.paginate(q, request.args.get('page', 1), 12)
 
     total_all = Report.query.count()
     by_status = dict(db.session.query(Report.status, func.count(Report.id)).group_by(Report.status).all())
     by_category = dict(db.session.query(Report.category, func.count(Report.id)).group_by(Report.category).all())
-
-    today = datetime.utcnow().date()
-    days = [(today - timedelta(days=i)).isoformat() for i in range(6, -1, -1)]
-    counts = {d: 0 for d in days}
-    rows = db.session.query(func.date(Report.created_at), func.count(Report.id)).group_by(func.date(Report.created_at)).all()
-    for d, c in rows:
-        ds = d if isinstance(d, str) else d.isoformat()
-        if ds in counts:
-            counts[ds] = c
-    series7 = [counts[d] for d in days]
+    days, series7 = repo.daily_counts_7d()
 
     stats = {'total': total_all, 'by_status': by_status, 'by_category': by_category, 'days': days, 'series7': series7}
 
@@ -105,9 +76,6 @@ def export_csv():
         writer.writerow([r.id, r.title, r.category, r.status, r.created_at.isoformat(sep=' '), r.address or '', r.latitude or '', r.longitude or ''])
     csv_data = output.getvalue()
     return Response(csv_data, mimetype='text/csv', headers={'Content-Disposition': 'attachment; filename=denuncias.csv'})
-
-from backend.app.forms import CompanyForm
-
 
 @admin_bp.route('/admin/terceirizadas')
 @login_required

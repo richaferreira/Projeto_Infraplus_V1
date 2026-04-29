@@ -10,3 +10,17 @@ body { min-height: 100vh; }
   background-position: center;
 }
 .map-box { height: 400px; border-radius: .5rem; overflow: hidden; background: #e9ecef; }
+
+.badge-status-aberta { background-color: #dc3545; color: #fff; }
+.badge-status-andamento { background-color: #fd7e14; color: #fff; }
+.badge-status-resolvida { background-color: #198754; color: #fff; }
+
+.card.shadow-sm { transition: box-shadow .2s ease; }
+.card.shadow-sm:hover { box-shadow: 0 .5rem 1rem rgba(0,0,0,.12) !important; }
+
+.table-hover tbody tr { transition: background-color .15s ease; }
+
+.stat-card .display-6,
+.stat-card .h2 { font-weight: 700; }
+
+footer { font-size: .85rem; }

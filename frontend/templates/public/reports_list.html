@@ -1,5 +1,6 @@
 
 {% extends 'base.html' %}
+{% from 'shared/_status_badge.html' import status_badge %}
 {% block title %}{{ title }} — InfraPlus{% endblock %}
 {% block content %}
   <div class="container my-4">
@@ -48,7 +49,7 @@
         <div class="col-md-6 col-lg-4">
           <div class="card h-100 shadow-sm">
             <div class="card-body">
-              <span class="badge bg-secondary float-end">{{ r.status }}</span>
+              <span class="float-end">{{ status_badge(r.status) }}</span>
               <h6 class="card-title">#{{ r.id }} — {{ r.title }}</h6>
               <div class="small text-muted">{{ r.category }} • {{ r.created_at.strftime('%d/%m/%Y %H:%M') }}</div>
               <p class="mt-2 text-truncate-2">{{ r.description }}</p>

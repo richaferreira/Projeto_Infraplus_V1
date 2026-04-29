@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from 'shared/_status_badge.html' import status_badge %}
 
 {% block content %}
 <div class="container py-4">
@@ -62,7 +63,7 @@
               </td>
               <td>{{ r.category or '—' }}</td>
               <td>
-                <span class="badge bg-secondary">{{ r.status or '—' }}</span>
+                {{ status_badge(r.status or '—') }}
               </td>
               <td>
                 {% if r.created_at %}{{ r.created_at.strftime('%d/%m/%Y %H:%M') }}{% else %}—{% endif %}

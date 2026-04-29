@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% block title %}Empresas terceirizadas — InfraPlus{% endblock %}
 {% block content %}
 <div class="container py-4">
   <h1 class="mb-3">Empresas terceirizadas</h1>
@@ -20,7 +21,7 @@
         <td>{{ c.address or '-' }}</td>
         <td>
           <form method="post" action="{{ url_for('admin.companies_delete', company_id=c.id) }}" onsubmit="return confirm('Excluir {{ c.name }}?');">
-            {{ csrf_token() }}
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button class="btn btn-sm btn-outline-danger">Excluir</button>
           </form>
         </td>

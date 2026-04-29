@@ -1,5 +1,6 @@
 
 {% extends 'base.html' %}
+{% from 'shared/_status_badge.html' import status_badge %}
 {% block title %}Admin — InfraPlus{% endblock %}
 {% block content %}
   <div class="container my-4">
@@ -94,7 +95,7 @@
               <td>{{ r.id }}</td>
               <td>{{ r.title }}</td>
               <td>{{ r.category }}</td>
-              <td><span class="badge bg-secondary">{{ r.status }}</span></td>
+              <td>{{ status_badge(r.status) }}</td>
               <td>{{ r.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
               <td class="text-end">
                 <a class="btn btn-sm btn-outline-primary" href="{{ url_for('admin.report_manage', report_id=r.id) }}">Gerenciar</a>

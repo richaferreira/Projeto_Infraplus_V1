@@ -1,4 +1,6 @@
 
+from urllib.parse import urlparse
+
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, login_required, logout_user, current_user
 from backend.app.forms import LoginForm, RegisterForm
@@ -17,7 +19,18 @@ def login():
         if user and user.check_password(form.password.data):
             login_user(user)
             flash('Login realizado com sucesso!', 'success')
-            next_url = request.args.get('next') or ( url_for('admin.dashboard') if user.is_admin else ( url_for('company.dashboard') if getattr(user,'company',None) else url_for('public.home') ) )
+            next_url = request.args.get('next')
+            if next_url:
+                parsed = urlparse(next_url)
+                if parsed.netloc or parsed.scheme:
+                    next_url = None
+            if not next_url:
+                if user.is_admin:
+                    next_url = url_for('admin.dashboard')
+                elif getattr(user, 'company', None):
+                    next_url = url_for('company.dashboard')
+                else:
+                    next_url = url_for('public.home')
             return redirect(next_url)
         flash('Credenciais inválidas.', 'danger')
     return render_template('auth/login.html', form=form)

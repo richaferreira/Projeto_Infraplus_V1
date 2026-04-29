@@ -1,0 +1,12 @@
+{# Macro for color-coded status badges #}
+{% macro status_badge(status) -%}
+  {%- if status == 'Aberta' -%}
+    <span class="badge badge-status-aberta">{{ status }}</span>
+  {%- elif status == 'Em andamento' -%}
+    <span class="badge badge-status-andamento">{{ status }}</span>
+  {%- elif status == 'Resolvida' -%}
+    <span class="badge badge-status-resolvida">{{ status }}</span>
+  {%- else -%}
+    <span class="badge bg-secondary">{{ status }}</span>
+  {%- endif -%}
+{%- endmacro %}
