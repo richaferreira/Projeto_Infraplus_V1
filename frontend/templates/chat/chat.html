@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}Assistente InfraPlus{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white d-flex align-items-center">
+          <i class="bi bi-chat-dots-fill me-2"></i>
+          <h5 class="mb-0">Assistente InfraPlus</h5>
+        </div>
+        <div class="card-body p-0">
+          <div id="chatMessages" class="p-3" style="height: 450px; overflow-y: auto;">
+            <div class="chat-msg bot mb-3">
+              <div class="d-flex align-items-start">
+                <span class="badge bg-primary me-2 mt-1"><i class="bi bi-robot"></i></span>
+                <div class="bg-light rounded p-2 flex-grow-1">
+                  Olá! Sou o assistente do InfraPlus. Como posso ajudar?<br>
+                  <small class="text-muted">Dica: digite "ajuda" para ver os comandos disponíveis.</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <form id="chatForm" class="d-flex gap-2">
+            <input type="text" id="chatInput" class="form-control" placeholder="Digite sua mensagem..." autocomplete="off" required>
+            <button type="submit" class="btn btn-primary" id="chatSend">
+              <i class="bi bi-send-fill"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+  var messages = document.getElementById('chatMessages');
+  var form = document.getElementById('chatForm');
+  var input = document.getElementById('chatInput');
+  var btn = document.getElementById('chatSend');
+
+  function addMessage(text, isBot) {
+    var div = document.createElement('div');
+    div.className = 'chat-msg ' + (isBot ? 'bot' : 'user') + ' mb-3';
+    var icon = isBot
+      ? '<span class="badge bg-primary me-2 mt-1"><i class="bi bi-robot"></i></span>'
+      : '<span class="badge bg-secondary me-2 mt-1"><i class="bi bi-person-fill"></i></span>';
+    var align = isBot ? 'align-items-start' : 'align-items-start flex-row-reverse';
+    var bgClass = isBot ? 'bg-light' : 'bg-primary text-white';
+    var formatted = text.replace(/\n/g, '<br>');
+    div.innerHTML = '<div class="d-flex ' + align + '">' + icon +
+      '<div class="rounded p-2 flex-grow-1 ' + bgClass + '">' + formatted + '</div></div>';
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var msg = input.value.trim();
+    if (!msg) return;
+    addMessage(msg, false);
+    input.value = '';
+    btn.disabled = true;
+
+    fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({message: msg})
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      addMessage(data.reply, true);
+      btn.disabled = false;
+      input.focus();
+    })
+    .catch(function() {
+      addMessage('Erro ao comunicar com o assistente. Tente novamente.', true);
+      btn.disabled = false;
+    });
+  });
+})();
+</script>
+{% endblock %}

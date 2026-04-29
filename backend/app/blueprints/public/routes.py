@@ -1,5 +1,5 @@
 
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
 from backend.app.forms import ReportForm, CommentForm
 from backend.app.models import Report, Comment, Company
@@ -60,6 +60,30 @@ def reports_in_progress():
 @public_bp.route('/denuncias/resolvidas')
 def reports_resolved():
     return list_reports_filtered('Denúncias Resolvidas', Report.query.filter_by(status='Resolvida'))
+
+@public_bp.route('/api/nearby')
+def api_nearby():
+    try:
+        lat = float(request.args.get('lat', 0))
+        lon = float(request.args.get('lon', 0))
+        radius = float(request.args.get('radius', 5))
+    except (ValueError, TypeError):
+        return jsonify({'error': 'Parâmetros inválidos'}), 400
+    radius = min(radius, 50)
+    results = ReportRepository.nearby(lat, lon, radius_km=radius)
+    data = [
+        {
+            'id': r.id,
+            'title': r.title,
+            'category': r.category,
+            'status': r.status,
+            'lat': r.latitude,
+            'lon': r.longitude,
+            'distance_km': dist,
+        }
+        for r, dist in results
+    ]
+    return jsonify(data)
 
 @public_bp.route('/denuncias/<int:report_id>', methods=['GET','POST'])
 def report_detail(report_id: int):

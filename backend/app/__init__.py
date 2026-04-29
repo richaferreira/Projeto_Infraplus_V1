@@ -78,10 +78,14 @@ def create_app():
     from .blueprints.auth.routes import auth_bp
     from .blueprints.admin.routes import admin_bp
     from .blueprints.company.routes import company_bp
+    from .blueprints.sse.routes import sse_bp
+    from .blueprints.chat.routes import chat_bp
     app.register_blueprint(public_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(company_bp)
+    app.register_blueprint(sse_bp)
+    app.register_blueprint(chat_bp)
 
     @app.errorhandler(403)
     def forbidden(e):
