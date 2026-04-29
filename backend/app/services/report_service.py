@@ -1,9 +1,13 @@
+import logging
 
 from backend.app.extensions import db, mail
 from backend.app.models import Report, ReportImage
 from backend.app.utils import save_uploaded_image
 from flask_mail import Message
 from flask import current_app
+
+logger = logging.getLogger(__name__)
+
 
 class ReportService:
     def create_report(self, form, user, files):
@@ -34,9 +38,14 @@ class ReportService:
             sender = current_app.config.get('MAIL_DEFAULT_SENDER')
             if not sender:
                 return
-            msg = Message(subject=f"[InfraPlus] Denúncia #{report.id} agora está '{report.status}'",
-                          recipients=[report.author.email],
-                          body=f"Olá, {report.author.name}! Sua denúncia #{report.id} teve o status atualizado para '{report.status}'.")
+            msg = Message(
+                subject=f"[InfraPlus] Denúncia #{report.id} agora está '{report.status}'",
+                recipients=[report.author.email],
+                body=(
+                    f"Olá, {report.author.name}! "
+                    f"Sua denúncia #{report.id} teve o status atualizado para '{report.status}'."
+                ),
+            )
             mail.send(msg)
         except Exception:
-            pass
+            logger.warning('Falha ao enviar e-mail de notificação para denúncia #%s', report.id, exc_info=True)

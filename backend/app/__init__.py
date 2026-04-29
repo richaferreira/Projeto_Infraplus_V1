@@ -1,12 +1,17 @@
-
+import logging
 import os
+from datetime import datetime
+
 from flask import Flask, render_template
-from .config import Config
 from flask_wtf import CSRFProtect
 from flask_login import LoginManager
-from .extensions import db, mail
 from dotenv import load_dotenv
 from sqlalchemy import text
+
+from .config import Config
+from .extensions import db, mail
+
+logger = logging.getLogger(__name__)
 
 csrf = CSRFProtect()
 login_manager = LoginManager()
@@ -31,9 +36,8 @@ def _ensure_schema(app):
                     except Exception:
                         pass
                     db.session.commit()
-    except Exception as e:
-        # Evita quebrar a aplicação caso o patch falhe; logue se tiver logger configurado.
-        pass
+    except Exception:
+        logger.warning('Falha ao executar _ensure_schema', exc_info=True)
 
 
 def create_app():
@@ -55,6 +59,7 @@ def create_app():
     with app.app_context():
         from .models import User
         db.create_all()
+        _ensure_schema(app)
         if not User.query.filter_by(email='admin@infra.plus').first():
             u = User(name='Administrador', email='admin@infra.plus', is_admin=True)
             u.set_password('123')
@@ -65,7 +70,9 @@ def create_app():
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        return db.session.get(User, int(user_id))
+
+    app.jinja_env.globals['now'] = datetime.utcnow
 
     from .blueprints.public.routes import public_bp
     from .blueprints.auth.routes import auth_bp
@@ -79,5 +86,15 @@ def create_app():
     @app.errorhandler(403)
     def forbidden(e):
         return render_template('errors/403.html'), 403
+
+    @app.errorhandler(404)
+    def not_found(e):
+        return render_template('errors/404.html'), 404
+
+    @app.errorhandler(500)
+    def internal_error(e):
+        logger.exception('Erro interno do servidor')
+        db.session.rollback()
+        return render_template('errors/500.html'), 500
 
     return app

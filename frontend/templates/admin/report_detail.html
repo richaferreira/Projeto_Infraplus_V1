@@ -1,5 +1,6 @@
 
 {% extends 'base.html' %}
+{% from 'shared/_status_badge.html' import status_badge %}
 {% block title %}Admin • Denúncia #{{ r.id }} — InfraPlus{% endblock %}
 {% block content %}
   <div class="container my-4">
@@ -9,7 +10,7 @@
           <div class="card-body">
             <div class="d-flex justify-content-between align-items-start">
               <h2 class="h5 mb-1">#{{ r.id }} — {{ r.title }}</h2>
-              <span class="badge bg-secondary">{{ r.status }}</span>
+              {{ status_badge(r.status) }}
             </div>
             <div class="small text-muted mb-2">{{ r.category }} • {{ r.created_at.strftime('%d/%m/%Y %H:%M') }}</div>
             {% if r.image_filename %}
