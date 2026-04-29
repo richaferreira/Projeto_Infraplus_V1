@@ -1,48 +1,119 @@
 {% extends "base.html" %}
 {% from 'shared/_status_badge.html' import status_badge %}
+{% block title %}Painel da Empresa — InfraPlus{% endblock %}
 
 {% block content %}
 <div class="container py-4">
-  <h1 class="h3 mb-4">Painel da Empresa</h1>
+  <h1 class="h3 mb-4"><i class="bi bi-building"></i> Painel da Empresa</h1>
 
-  <!-- KPIs / Charts -->
+  <!-- KPIs -->
   <div class="row g-3 mb-4">
-    <div class="col-12 col-md-4">
-      <div class="card h-100">
+    <div class="col-12 col-md-3">
+      <div class="card h-100 shadow-sm border-start border-primary border-4">
         <div class="card-body">
-          <h6 class="text-muted mb-2">Total de Denúncias</h6>
-          <div class="display-5 fw-bold">{{ total or 0 }}</div>
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="text-muted small">Total</div>
+              <div class="h2 mb-0 fw-bold">{{ total or 0 }}</div>
+            </div>
+            <i class="bi bi-megaphone text-primary" style="font-size: 2rem; opacity: .5;"></i>
+          </div>
         </div>
       </div>
     </div>
-    <div class="col-12 col-md-4">
-      <div class="card h-100">
+    <div class="col-12 col-md-3">
+      <div class="card h-100 shadow-sm border-start border-danger border-4">
         <div class="card-body">
-          <h6 class="text-muted mb-2">Por Status</h6>
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="text-muted small">Abertas</div>
+              <div class="h2 mb-0 fw-bold text-danger">{{ by_status.get('Aberta', 0) }}</div>
+            </div>
+            <i class="bi bi-exclamation-circle text-danger" style="font-size: 2rem; opacity: .5;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-3">
+      <div class="card h-100 shadow-sm border-start border-warning border-4">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="text-muted small">Em andamento</div>
+              <div class="h2 mb-0 fw-bold text-warning">{{ by_status.get('Em andamento', 0) }}</div>
+            </div>
+            <i class="bi bi-hourglass-split text-warning" style="font-size: 2rem; opacity: .5;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-3">
+      <div class="card h-100 shadow-sm border-start border-success border-4">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="text-muted small">Resolvidas</div>
+              <div class="h2 mb-0 fw-bold text-success">{{ by_status.get('Resolvida', 0) }}</div>
+            </div>
+            <i class="bi bi-check-circle text-success" style="font-size: 2rem; opacity: .5;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-6">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h6 class="text-muted mb-2">Distribuição por Status</h6>
           <canvas id="chartStatus"></canvas>
         </div>
       </div>
     </div>
-    <div class="col-12 col-md-4">
-      <div class="card h-100">
+    <div class="col-12 col-md-6">
+      <div class="card h-100 shadow-sm">
         <div class="card-body">
-          <h6 class="text-muted mb-2">Por Categoria</h6>
+          <h6 class="text-muted mb-2">Distribuição por Categoria</h6>
           <canvas id="chartCategory"></canvas>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Lista de denúncias da empresa -->
-  <div class="card">
+  <!-- Filters -->
+  <form class="card card-body shadow-sm mb-3" method="get">
+    <div class="row g-2 align-items-end">
+      <div class="col-md-4">
+        <label class="form-label">Status</label>
+        <select class="form-select" name="status">
+          <option value="">Todos</option>
+          {% for s in ['Aberta','Em andamento','Resolvida'] %}
+            <option value="{{ s }}" {% if request.args.get('status')==s %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Busca</label>
+        <input type="text" class="form-control" name="q" value="{{ request.args.get('q','') }}" placeholder="Buscar por título...">
+      </div>
+      <div class="col-md-4 d-grid">
+        <button class="btn btn-primary"><i class="bi bi-funnel"></i> Filtrar</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Reports list -->
+  <div class="card shadow-sm">
     <div class="card-body">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h6 class="text-muted mb-0">Denúncias da minha empresa</h6>
+        <h6 class="text-muted mb-0">Denúncias da minha empresa ({{ total or 0 }})</h6>
       </div>
 
       <div class="table-responsive">
-        <table class="table align-middle">
-          <thead>
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
             <tr>
               <th style="width: 80px;">ID</th>
               <th>Título</th>
@@ -62,14 +133,12 @@
                 </a>
               </td>
               <td>{{ r.category or '—' }}</td>
-              <td>
-                {{ status_badge(r.status or '—') }}
-              </td>
+              <td>{{ status_badge(r.status or '—') }}</td>
               <td>
                 {% if r.created_at %}{{ r.created_at.strftime('%d/%m/%Y %H:%M') }}{% else %}—{% endif %}
               </td>
               <td class="text-nowrap">
-                <a class="btn btn-sm btn-primary" href="{{ url_for('company.report_detail', report_id=r.id) }}">Ver / Responder</a>
+                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('company.report_detail', report_id=r.id) }}"><i class="bi bi-eye"></i> Ver</a>
               </td>
             </tr>
             {% else %}
@@ -109,19 +178,35 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
 <script>
 (function () {
+  const statusColors = {'Aberta': '#dc3545', 'Em andamento': '#fd7e14', 'Resolvida': '#198754'};
   const byStatus = {{ (by_status or {})|tojson|safe }};
   const byCategory = {{ (by_category or {})|tojson|safe }};
 
   const ctxS = document.getElementById('chartStatus');
   if (ctxS) new Chart(ctxS, {
     type: 'doughnut',
-    data: { labels: Object.keys(byStatus), datasets: [{ data: Object.values(byStatus) }] }
+    data: {
+      labels: Object.keys(byStatus),
+      datasets: [{
+        data: Object.values(byStatus),
+        backgroundColor: Object.keys(byStatus).map(function(k) { return statusColors[k] || '#6c757d'; })
+      }]
+    },
+    options: { plugins: { legend: { position: 'bottom' } } }
   });
 
+  const categoryColors = ['#0d6efd','#6610f2','#6f42c1','#d63384','#20c997','#0dcaf0','#ffc107'];
   const ctxC = document.getElementById('chartCategory');
   if (ctxC) new Chart(ctxC, {
     type: 'doughnut',
-    data: { labels: Object.keys(byCategory), datasets: [{ data: Object.values(byCategory) }] }
+    data: {
+      labels: Object.keys(byCategory),
+      datasets: [{
+        data: Object.values(byCategory),
+        backgroundColor: categoryColors.slice(0, Object.keys(byCategory).length)
+      }]
+    },
+    options: { plugins: { legend: { position: 'bottom' } } }
   });
 })();
 </script>

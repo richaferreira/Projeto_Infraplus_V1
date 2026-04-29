@@ -61,6 +61,28 @@ def reports_in_progress():
 def reports_resolved():
     return list_reports_filtered('Denúncias Resolvidas', Report.query.filter_by(status='Resolvida'))
 
+@public_bp.route('/minhas-denuncias')
+@login_required
+def my_reports():
+    repo = ReportRepository
+    q = Report.query.filter_by(user_id=current_user.id).order_by(Report.created_at.desc())
+
+    status_filter = request.args.get('status', '').strip()
+    if status_filter:
+        q = q.filter(Report.status == status_filter)
+
+    items, total, page, pages = repo.paginate(q, request.args.get('page', 1), 12)
+
+    by_status = dict(
+        db.session.query(Report.status, db.func.count(Report.id))
+        .filter(Report.user_id == current_user.id)
+        .group_by(Report.status).all()
+    )
+
+    return render_template('public/my_reports.html',
+                           reports=items, total=total, page=page, pages=pages,
+                           by_status=by_status)
+
 @public_bp.route('/api/nearby')
 def api_nearby():
     try:

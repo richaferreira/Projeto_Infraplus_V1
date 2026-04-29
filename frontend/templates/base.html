@@ -25,6 +25,9 @@
           <li class="nav-item"><a class="nav-link" href="{{ url_for('public.reports_in_progress') }}">Em andamento</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('public.reports_resolved') }}">Resolvidas</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('chat.chat_page') }}"><i class="bi bi-chat-dots"></i> Assistente</a></li>
+          {% if current_user.is_authenticated and not current_user.is_admin and not current_user.company %}
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('public.my_reports') }}"><i class="bi bi-person-lines-fill"></i> Minhas</a></li>
+          {% endif %}
         </ul>
         <form class="d-flex me-2" role="search" method="get" action="{{ request.path if request.endpoint and 'public.reports_' in request.endpoint else url_for('public.reports_open') }}">
           <input class="form-control" type="search" name="q" value="{{ request.args.get('q','') }}" placeholder="Buscar..." aria-label="Buscar">
@@ -36,9 +39,10 @@
   <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Admin</button>
   <ul class="dropdown-menu dropdown-menu-end">
     <li><a class="dropdown-item" href="{{ url_for('admin.dashboard') }}">Painel</a></li>
-    <li><a class="dropdown-item" href="{{ url_for('admin.companies_list') }}">Empresas terceirizadas</a></li>
+    <li><a class="dropdown-item" href="{{ url_for('admin.companies_list') }}"><i class="bi bi-building"></i> Empresas</a></li>
+    <li><a class="dropdown-item" href="{{ url_for('admin.users_list') }}"><i class="bi bi-people"></i> Usuários</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="{{ url_for('admin.export_csv') }}">Exportar CSV</a></li>
+    <li><a class="dropdown-item" href="{{ url_for('admin.export_csv') }}"><i class="bi bi-download"></i> Exportar CSV</a></li>
   </ul>
 </div>
             {% elif current_user.company %}

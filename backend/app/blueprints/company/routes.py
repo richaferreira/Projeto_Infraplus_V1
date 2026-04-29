@@ -15,9 +15,18 @@ def dashboard():
 
     company_id = current_user.company.id
 
-    q = (Report.query
-         .filter(Report.assigned_company_id == company_id)
-         .order_by(Report.created_at.desc()))
+    q = Report.query.filter(Report.assigned_company_id == company_id)
+
+    status_filter = request.args.get('status', '').strip()
+    if status_filter:
+        q = q.filter(Report.status == status_filter)
+
+    search = request.args.get('q', '').strip()
+    if search:
+        like = f'%{search}%'
+        q = q.filter(Report.title.ilike(like) | Report.description.ilike(like))
+
+    q = q.order_by(Report.created_at.desc())
 
     reports, total, page, pages = ReportRepository.paginate(
         q, request.args.get('page', 1), 12
